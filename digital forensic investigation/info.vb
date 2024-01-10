@@ -1,8 +1,19 @@
 ﻿Imports System.IO
 Imports System.Management
 Imports Microsoft.Win32
+Imports Microsoft.Win32.TaskScheduler
+
 Public Class info
     Private Sub info_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' احصل على معلومات النظام
+        Dim searcher As New ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem")
+        Dim collection As ManagementObjectCollection = searcher.Get()
+
+        ' اطبع معلومات النظام
+        For Each info As ManagementObject In collection
+            TextBox4.Text = (info("Manufacturer")) & " " & (info("Model"))
+            'TextBox4.Text = (info("Model"))
+        Next
         ControlExtension.Draggable(Me, True)
 
         Dim installDate As String = GetOriginalInstallDate()
@@ -23,8 +34,64 @@ Public Class info
         process.WaitForExit()
         RichTextBox2.Text = output
         USBS()
+        STARTUP()
+        DisplayScheduledTasks()
+
+    End Sub
+    Sub STARTUP()
+        ' تحديد مسار التسجيل لبرامج بدء التشغيل
+        Dim keyPath As String = "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+
+        ' فتح مفتاح التسجيل
+        Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey(keyPath)
+
+        ' التحقق مما إذا كان المفتاح موجودًا
+        If key IsNot Nothing Then
+            ' الحصول على أسماء القيم (البرامج)
+            Dim valueNames As String() = key.GetValueNames()
+
+            ' عرض معلومات حول كل برنامج
+            For Each valueName In valueNames
+                ' اسم الملف
+                Dim fileName As String = key.GetValue(valueName).ToString()
+
+                ' تاريخ تثبيت البرنامج
+                Dim installDate As Date = GetInstallDate(fileName)
+
+                ' إضافة المعلومات إلى RichTextBox بدلاً من إعادة تعيينه
+                RichTextBox3.AppendText("File name: " & fileName & vbCrLf)
+                RichTextBox3.AppendText("File path: " & GetFilePath(fileName) & vbCrLf)
+                RichTextBox3.AppendText("Date of installation: " & installDate.ToString() & vbCrLf)
+                RichTextBox3.AppendText("------------------------" & vbCrLf)
+            Next
+        Else
+            ' إذا لم يتم العثور على المفتاح
+            RichTextBox3.Text = "لا يمكن العثور على مفتاح التسجيل."
+        End If
+
+        ' Console.ReadLine() ' لا داعي لهذا في التطبيق الخاص بك
     End Sub
 
+
+    ' الوظيفة للحصول على مسار ملف البرنامج
+    Function GetFilePath(fileName As String) As String
+        Try
+            Dim fileInfo As New System.IO.FileInfo(fileName)
+            Return fileInfo.FullName
+        Catch ex As Exception
+            Return "لا يمكن العثور على الملف"
+        End Try
+    End Function
+
+    ' الوظيفة للحصول على تاريخ تثبيت البرنامج
+    Function GetInstallDate(fileName As String) As Date
+        Try
+            Dim fileInfo As New System.IO.FileInfo(fileName)
+            Return fileInfo.CreationTime
+        Catch ex As Exception
+            Return Date.MinValue
+        End Try
+    End Function
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         ' The file name to save the information
         Dim filePath As String = Path.Combine(Application.StartupPath, "File.txt")
@@ -47,10 +114,28 @@ Public Class info
             writer.WriteLine("Detected Viruses:")
             writer.WriteLine(RichTextBox2.Text)
             writer.WriteLine("===========")
+            writer.WriteLine("StartUP:")
+            writer.WriteLine(RichTextBox3.Text)
+            writer.WriteLine("===========")
         End Using
         MessageBox.Show("Information saved successfully in the file.")
     End Sub
+    Sub DisplayScheduledTasks()
+        ' إنشاء مهمة جدولة
+        Using ts As TaskService = New TaskService()
+            ' الحصول على جميع المهام المجدولة
+            Dim tasks As IEnumerable(Of Task) = ts.AllTasks
 
+            ' عرض معلومات حول كل مهمة مجدولة
+            For Each task As Task In tasks
+                RichTextBox4.AppendText("Task Name: " & task.Name & vbCrLf)
+                RichTextBox4.AppendText("Path: " & task.Path & vbCrLf)
+                RichTextBox4.AppendText("State: " & task.State.ToString() & vbCrLf)
+                RichTextBox4.AppendText("Next Run Time: " & task.NextRunTime.ToString() & vbCrLf)
+                RichTextBox4.AppendText("------------------------" & vbCrLf)
+            Next
+        End Using
+    End Sub
     Sub USBS()
         Dim registryKey2 As RegistryKey = Registry.LocalMachine.OpenSubKey("SYSTEM\CurrentControlSet\Enum\USBSTOR", True)
         If registryKey2 Is Nothing Then
@@ -84,7 +169,7 @@ Public Class info
             End If
         Next
         ' عرض عدد friendlyNames في Label1
-        Label1.Text = "عدد USB : " & count.ToString()
+        'Label1.Text = " USB : " & count.ToString()
     End Sub
     Private Function GetOperatingSystemInfo() As String
         Dim osInfo As String = ""
