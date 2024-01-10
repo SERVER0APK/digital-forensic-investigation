@@ -8,4 +8,4 @@
 * Saving the report in a text file.
 
 * Note: Run the program as an administrator.
-![3](https://github.com/SERVER0APK/digital-forensic-investigation/assets/151466539/db3f577f-e24f-443b-a2ac-3e90588cc966)
+![Screenshot 2024-01-10 115826](https://github.com/SERVER0APK/digital-forensic-investigation/assets/151466539/26b9f1c7-8a99-4d4b-8070-d4264b827f4a)
