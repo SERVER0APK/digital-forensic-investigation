@@ -43,12 +43,15 @@ Partial Class info
         Me.RichTextBox4 = New System.Windows.Forms.RichTextBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TextBox4 = New System.Windows.Forms.TextBox()
+        Me.TabPage5 = New System.Windows.Forms.TabPage()
+        Me.RichTextBox5 = New System.Windows.Forms.RichTextBox()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.TabPage2.SuspendLayout()
         Me.TabPage3.SuspendLayout()
         Me.TabPage4.SuspendLayout()
+        Me.TabPage5.SuspendLayout()
         Me.SuspendLayout()
         '
         'TextBox1
@@ -155,6 +158,7 @@ Partial Class info
         Me.TabControl1.Controls.Add(Me.TabPage2)
         Me.TabControl1.Controls.Add(Me.TabPage3)
         Me.TabControl1.Controls.Add(Me.TabPage4)
+        Me.TabControl1.Controls.Add(Me.TabPage5)
         Me.TabControl1.Location = New System.Drawing.Point(12, 62)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
@@ -266,6 +270,27 @@ Partial Class info
         Me.TextBox4.Size = New System.Drawing.Size(272, 29)
         Me.TextBox4.TabIndex = 28
         '
+        'TabPage5
+        '
+        Me.TabPage5.Controls.Add(Me.RichTextBox5)
+        Me.TabPage5.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage5.Name = "TabPage5"
+        Me.TabPage5.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage5.Size = New System.Drawing.Size(325, 484)
+        Me.TabPage5.TabIndex = 4
+        Me.TabPage5.Text = "WIFI"
+        Me.TabPage5.UseVisualStyleBackColor = True
+        '
+        'RichTextBox5
+        '
+        Me.RichTextBox5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.RichTextBox5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(13, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(98, Byte), Integer))
+        Me.RichTextBox5.Location = New System.Drawing.Point(3, 3)
+        Me.RichTextBox5.Name = "RichTextBox5"
+        Me.RichTextBox5.Size = New System.Drawing.Size(319, 478)
+        Me.RichTextBox5.TabIndex = 27
+        Me.RichTextBox5.Text = ""
+        '
         'info
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -293,6 +318,7 @@ Partial Class info
         Me.TabPage2.ResumeLayout(False)
         Me.TabPage3.ResumeLayout(False)
         Me.TabPage4.ResumeLayout(False)
+        Me.TabPage5.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -318,4 +344,6 @@ Partial Class info
     Friend WithEvents RichTextBox4 As RichTextBox
     Friend WithEvents Label1 As Label
     Friend WithEvents TextBox4 As TextBox
+    Friend WithEvents TabPage5 As TabPage
+    Friend WithEvents RichTextBox5 As RichTextBox
 End Class
