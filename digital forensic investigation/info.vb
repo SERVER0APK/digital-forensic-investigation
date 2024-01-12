@@ -16,7 +16,6 @@ Public Class info
             'Specify device information
             For Each info As ManagementObject In collection
                 'Join the manufacturer's name and device model
-                TextBox4.Text = $"{info("Manufacturer")} {info("Model")}"
             Next
         Catch ex As Exception
             MessageBox.Show($"An error occurred while loading device information: {ex.Message}", "Wrong", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -24,10 +23,8 @@ Public Class info
         ControlExtension.Draggable(Me, True)
 
         Dim installDate As String = GetOriginalInstallDate()
-        TextBox1.Text = installDate
         Dim osInfo As String = GetOperatingSystemInfo()
-        TextBox2.Text = osInfo
-        TextBox3.Text = Environment.MachineName
+
         Dim psi As New ProcessStartInfo()
         psi.FileName = "powershell.exe"
         psi.Arguments = "Get-MpThreatDetection"
@@ -44,7 +41,51 @@ Public Class info
         STARTUP()
         DisplayScheduledTasks()
         wifi()
+        Now()
     End Sub
+
+
+
+    Private Function GetProcessorName() As String
+        Try
+            Dim searcher As New ManagementObjectSearcher("SELECT * FROM Win32_Processor")
+            For Each queryObj As ManagementObject In searcher.Get()
+                Return queryObj("Name").ToString()
+            Next
+        Catch ex As Exception
+            Return "Unknown"
+        End Try
+    End Function
+
+    Private Function GetGraphicsCardName() As String
+        Try
+            Dim searcher As New ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%Display%'")
+            For Each queryObj As ManagementObject In searcher.Get()
+                Return queryObj("Name").ToString()
+            Next
+        Catch ex As Exception
+            Return "Unknown"
+        End Try
+    End Function
+
+    Private Function GetMotherboardSerial() As String
+        Try
+            Dim searcher As New ManagementObjectSearcher("SELECT * FROM Win32_BaseBoard")
+            For Each queryObj As ManagementObject In searcher.Get()
+                Return queryObj("SerialNumber").ToString()
+            Next
+        Catch ex As Exception
+            Return "Unknown"
+        End Try
+    End Function
+
+
+
+
+    Private Function ConvertBytesToGB(bytes As ULong) As Double
+        ' تحويل البايتات إلى غيغابايت
+        Return bytes / (1024.0 ^ 3)
+    End Function
     Sub wifi()
         'Call the get grids function and display it in RichTextBox5
         DisplayWiFiNetworks(RichTextBox5)
@@ -171,21 +212,19 @@ Public Class info
         End If
 
         ' Create separate HTML files for each section
-        CreateSectionFile("Installation Date of the Operating System", TextBox1.Text, Path.Combine(sectionDir, "InstallationDate.html"))
-        CreateSectionFile("System Type and Kernel", TextBox2.Text, Path.Combine(sectionDir, "SystemType.html"))
-        CreateSectionFile("Computer Name", TextBox3.Text, Path.Combine(sectionDir, "ComputerName.html"))
-        CreateSectionFile("Manufacturer Name", TextBox4.Text, Path.Combine(sectionDir, "ManufacturerName.html"))
         CreateSectionFile("WiFi Networks", RichTextBox5.Text, Path.Combine(sectionDir, "WiFiNetworks.html"), True)
         CreateSectionFile("USB Names", RichTextBox1.Text, Path.Combine(sectionDir, "USBNames.html"), True)
         CreateSectionFile("Detected Viruses", RichTextBox2.Text, Path.Combine(sectionDir, "DetectedViruses.html"))
         CreateSectionFile("StartUP", RichTextBox3.Text, Path.Combine(sectionDir, "StartUP.html"), True)
         CreateSectionFile("Tasks", RichTextBox4.Text, Path.Combine(sectionDir, "Tasks.html"), True)
+        CreateSectionFile("Info", $"{RichTextBox6.Text}{Environment.NewLine}{RichTextBox7.Text}", Path.Combine(sectionDir, "Info.html"), True)
 
         ' Create the main HTML file with buttons for each section
         CreateMainPage(sectionDir)
 
         MessageBox.Show("Information saved successfully in the HTML files.")
     End Sub
+
 
     Private Sub CreateSectionFile(sectionTitle As String, content As String, filePath As String, Optional usePre As Boolean = False, Optional useDoubleLineBreaks As Boolean = True)
         ' Open the section file for writing
@@ -350,7 +389,6 @@ Public Class info
                 Dim osArchitecture As String = osMgmtObj("OSArchitecture").ToString()
 
                 osInfo = $"{osName}{Environment.NewLine}  Kernel: {osArchitecture}"
-                TextBox2.Text = osInfo
             End If
 
         Catch ex As Exception
