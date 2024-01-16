@@ -51,7 +51,7 @@ Module Module1
         Return "N/A"
     End Function
 
-    Private Function GetSystemInfo() As SystemInfo
+    Public Function GetSystemInfo() As SystemInfo
         Dim systemInfo As New SystemInfo()
 
         Try
@@ -74,7 +74,7 @@ Module Module1
         Return systemInfo
     End Function
 
-    Private Function GetProcessorInfo() As ProcessorInfo
+    Public Function GetProcessorInfo() As ProcessorInfo
         Dim processorInfo As New ProcessorInfo()
 
         Try
@@ -96,7 +96,7 @@ Module Module1
         Return processorInfo
     End Function
 
-    Private Function GetHardDriveInfos() As List(Of HardDriveInfo)
+    Public Function GetHardDriveInfos() As List(Of HardDriveInfo)
         Dim hardDriveInfos As New List(Of HardDriveInfo)()
 
         Try
@@ -118,7 +118,7 @@ Module Module1
         Return hardDriveInfos
     End Function
 
-    Private Function GetDisplayInfo() As DisplayInfo
+    Public Function GetDisplayInfo() As DisplayInfo
         Dim displayInfo As New DisplayInfo()
 
         Try

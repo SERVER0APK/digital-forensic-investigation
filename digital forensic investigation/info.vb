@@ -41,10 +41,9 @@ Public Class info
         STARTUP()
         DisplayScheduledTasks()
         wifi()
-        Now()
+        now()
+        'GenerateHTMLReport()
     End Sub
-
-
 
     Private Function GetProcessorName() As String
         Try
@@ -304,6 +303,48 @@ Public Class info
             writer.WriteLine("<html>")
             writer.WriteLine("<head><title>Main Page</title></head>")
             writer.WriteLine("<body>")
+
+            ' Add your system information directly here
+            Dim systemInfo As Module1.SystemInfo = GetSystemInfo()
+            Dim installDate As String = GetOriginalInstallDate()
+            Dim osInfo As String = GetOperatingSystemInfo()
+            Dim usbCount As Integer = RichTextBox1.Lines.Count(Function(line) line.StartsWith("FriendlyName:"))
+
+            ' Calculate the number of individual results in RichTextBox2 separated by a comma
+            Dim virusCount As Integer = RichTextBox2.Text.Split(","c).Length
+
+            ' Get the rest of the system information
+            Dim cpuType As String = GetProcessorInfo().Name
+            Dim gpuType As String = GetDisplayInfo().ChipType
+            Dim ramInfo As String = systemInfo.Memory
+            Dim hardDriveInfos As List(Of Module1.HardDriveInfo) = GetHardDriveInfos()
+
+            ' Write system information directly in the MainPage
+            writer.WriteLine("<h1>تقرير النظام</h1>")
+            writer.WriteLine("<ul>")
+            writer.WriteLine($"<li><strong>اسم الحاسوب:</strong> {systemInfo.ComputerName}</li>")
+            writer.WriteLine($"<li><strong>تاريخ تنصيب النظام:</strong> {installDate}</li>")
+            writer.WriteLine($"<li><strong>نوع النظام المثبت:</strong> {osInfo}</li>")
+            writer.WriteLine($"<li><strong>عدد USB المتصلة:</strong> {usbCount}</li>")
+            'writer.WriteLine($"<li><strong>عدد الفيروسات المكتشفة:</strong> {virusCount}</li>")
+
+            writer.WriteLine($"<li><strong>عدد شبكات WiFi المتصلة:</strong> {GetWiFiNetworks().Count}</li>")
+            writer.WriteLine($"<li><strong>نوع المعالج (CPU):</strong> {cpuType}</li>")
+            writer.WriteLine($"<li><strong>نوع البطاقة الرسومية (GPU):</strong> {gpuType}</li>")
+            writer.WriteLine($"<li><strong>الذاكرة (RAM):</strong> {ramInfo}</li>")
+            writer.WriteLine("<li><strong>معلومات الذاكرة التخزينية:</strong>")
+            writer.WriteLine("<ul>")
+
+            ' Write hard drive information directly in the MainPage
+            For Each hardDriveInfo In hardDriveInfos
+                writer.WriteLine($"<li><strong>اسم القرص:</strong> {hardDriveInfo.Name}</li>")
+                writer.WriteLine($"<li><strong>الشركة المصنعة:</strong> {hardDriveInfo.Manufacturer}</li>")
+                writer.WriteLine($"<li><strong>نوع الواجهة:</strong> {hardDriveInfo.InterfaceType}</li>")
+                writer.WriteLine($"<li><strong>الحجم:</strong> {hardDriveInfo.Size}</li>")
+            Next
+
+            writer.WriteLine("</ul></li>")
+            writer.WriteLine("</ul>")
 
             ' Create buttons for each section
             For Each sectionFile As String In Directory.GetFiles(sectionDir)
