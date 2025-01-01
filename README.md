@@ -7,6 +7,6 @@
 * Computer name.
 * Saving the report in a text file.
 
-* Note: Run the program as an administrator.
+* Note: Run the program as an administrator..
 
 ![1](https://github.com/SERVER0APK/digital-forensic-investigation/assets/151466539/b2de8656-8e96-48d0-934d-c96767c6bb3a)
